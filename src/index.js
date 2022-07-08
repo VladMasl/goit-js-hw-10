@@ -28,25 +28,12 @@ const addHtmlCountryList = data => {
   infiCountryEl.innerHTML = listCountries(data);
 };
 
-const clearHTML = {
-  all() {
-    infiCountryEl.innerHTML = '';
-    countryList.innerHTML = '';
-  },
 
-  list() {
-    countryList.innerHTML = '';
-  },
-
-  info() {
-    infiCountryEl.innerHTML = '';
-  },
-};
 
 function ewentTargetValue(evt) {
   const outputTextInput = evt.target.value.trim();
   if (outputTextInput === '') {
-    clearHTML.all();
+    clearEl.all();
     return;
   }
 
@@ -54,7 +41,7 @@ function ewentTargetValue(evt) {
     fetchCountries(outputTextInput)
       .then(data => {
         if (data.length >= 10) {
-          clearHTML.all();
+          clearEl.all();
           Notify.info(
             'Too many matches found. Please enter a more specific name.'
           );
@@ -62,25 +49,39 @@ function ewentTargetValue(evt) {
         }
 
         if (data.length >= 2 && data.length <= 10) {
-          clearHTML.info();
+          clearEl.info();
 
           addHtmlCountryList(data);
           return;
         }
         if (data.length === 1) {
-          clearHTML.list();
+          clearEl.info();
           addHtmlInfoCountry(data);
           return;
         }
       })
       .catch(error => {
-        clearHTML.all();
+        clearEl.all();
 
         Notify.failure(error);
       });
   } else {
-    clearHTML.all();
+    clearEl.all();
   }
 }
+const clearEl = {
+  all() {
+    infiCountryEl.innerHTML = '';
+      countryList.innerHTML = '';
+    },
+  
+    list() {
+      countryList.innerHTML = '';
+    },
+  
+    info() {
+      infiCountryEl.innerHTML = '';
+    },
+  };
 
 textInput.addEventListener('input', debounce(ewentTargetValue, DEBOUNCE_DELAY));
